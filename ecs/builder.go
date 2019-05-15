@@ -46,6 +46,8 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 		InterpolateFilter: &interpolate.RenderFilter{
 			Exclude: []string{
 				"run_command",
+				"snapshot_tags",
+				"tags",
 			},
 		},
 	}, raws...)
@@ -186,7 +188,9 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 			WaitSnapshotReadyTimeout:     b.getSnapshotReadyTimeout(),
 		},
 		&stepCreateTags{
-			Tags: b.config.AlicloudImageTags,
+			ImageTags:    b.config.AlicloudImageTags,
+			SnapshotTags: b.config.SnapshotTags,
+			Ctx:          b.config.ctx,
 		},
 		&stepRegionCopyAlicloudImage{
 			AlicloudImageDestinationRegions: b.config.AlicloudImageDestinationRegions,

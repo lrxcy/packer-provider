@@ -610,6 +610,35 @@ func checkImageTags() builderT.TestCheckFunc {
 	}
 }
 
+func TestBuilderAcc_Tags_Template_Engine(t *testing.T) {
+	t.Parallel()
+	builderT.Test(t, builderT.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		Builder:  &Builder{},
+		Template: testBuilderAccTagsTemplateEngine,
+	})
+}
+
+const testBuilderAccTagsTemplateEngine = `
+{	"builders": [{
+		"type": "test",
+		"region": "cn-beijing",
+		"instance_type": "ecs.n1.tiny",
+		"source_image":"ubuntu_18_04_64_20G_alibase_20190223.vhd",
+		"ssh_username": "root",
+		"io_optimized":"true",
+		"image_name": "packer-test-imageTags_{{timestamp}}",
+		"tags": {
+			"OS_Version": "Ubuntu",
+			"Release": "18.0",
+			"Base_IMAGE_Name": "{{ .SourceIMAGEName }}",
+			"Extra": "{{ .SourceIMAGETags }}"
+       }
+	}]
+}`
+
 func TestBuilderAcc_dataDiskEncrypted(t *testing.T) {
 	t.Parallel()
 	builderT.Test(t, builderT.TestCase{
