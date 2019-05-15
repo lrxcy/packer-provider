@@ -707,6 +707,12 @@
 			"versionExact": "v1.4.0"
 		},
 		{
+			"checksumSHA1": "iwFcCK9/UAz/ISBIjcy1QRY2bhQ=",
+			"path": "github.com/hashicorp/packer/common/retry",
+			"revision": "cc78ac2da92ffb53924c881590bc24210b8e1933",
+			"revisionTime": "2019-05-14T21:20:06Z"
+		},
+		{
 			"checksumSHA1": "3Wt0dZouvdRgNIQfOv9BRPi6Chc=",
 			"path": "github.com/hashicorp/packer/common/ssh",
 			"revision": "01b9bf4d4fa9b493029c65f5caa175b90a59f931",
