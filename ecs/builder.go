@@ -188,9 +188,8 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 			WaitSnapshotReadyTimeout:     b.getSnapshotReadyTimeout(),
 		},
 		&stepCreateTags{
-			ImageTags:    b.config.AlicloudImageTags,
-			SnapshotTags: b.config.SnapshotTags,
-			Ctx:          b.config.ctx,
+			Tags: b.config.AlicloudImageTags,
+			Ctx:  b.config.ctx,
 		},
 		&stepRegionCopyAlicloudImage{
 			AlicloudImageDestinationRegions: b.config.AlicloudImageDestinationRegions,

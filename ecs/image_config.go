@@ -25,21 +25,20 @@ type AlicloudDiskDevices struct {
 }
 
 type AlicloudImageConfig struct {
-	AlicloudImageName                 string            `mapstructure:"image_name"`
-	AlicloudImageVersion              string            `mapstructure:"image_version"`
-	AlicloudImageDescription          string            `mapstructure:"image_description"`
-	AlicloudImageShareAccounts        []string          `mapstructure:"image_share_account"`
-	AlicloudImageUNShareAccounts      []string          `mapstructure:"image_unshare_account"`
-	AlicloudImageDestinationRegions   []string          `mapstructure:"image_copy_regions"`
-	AlicloudImageDestinationNames     []string          `mapstructure:"image_copy_names"`
-	ImageEncrypted                    *bool             `mapstructure:"image_encrypted"`
-	AlicloudImageForceDelete          bool              `mapstructure:"image_force_delete"`
-	AlicloudImageForceDeleteSnapshots bool              `mapstructure:"image_force_delete_snapshots"`
-	AlicloudImageForceDeleteInstances bool              `mapstructure:"image_force_delete_instances"`
-	AlicloudImageIgnoreDataDisks      bool              `mapstructure:"image_ignore_data_disks"`
-	AlicloudImageSkipRegionValidation bool              `mapstructure:"skip_region_validation"`
+	AlicloudImageName                 string         `mapstructure:"image_name"`
+	AlicloudImageVersion              string         `mapstructure:"image_version"`
+	AlicloudImageDescription          string         `mapstructure:"image_description"`
+	AlicloudImageShareAccounts        []string       `mapstructure:"image_share_account"`
+	AlicloudImageUNShareAccounts      []string       `mapstructure:"image_unshare_account"`
+	AlicloudImageDestinationRegions   []string       `mapstructure:"image_copy_regions"`
+	AlicloudImageDestinationNames     []string       `mapstructure:"image_copy_names"`
+	ImageEncrypted                    *bool          `mapstructure:"image_encrypted"`
+	AlicloudImageForceDelete          bool           `mapstructure:"image_force_delete"`
+	AlicloudImageForceDeleteSnapshots bool           `mapstructure:"image_force_delete_snapshots"`
+	AlicloudImageForceDeleteInstances bool           `mapstructure:"image_force_delete_instances"`
+	AlicloudImageIgnoreDataDisks      bool           `mapstructure:"image_ignore_data_disks"`
+	AlicloudImageSkipRegionValidation bool           `mapstructure:"skip_region_validation"`
 	AlicloudImageTags                 AliCloudTagMap `mapstructure:"tags"`
-	SnapshotTags                      AliCloudTagMap `mapstructure:"snapshot_tags"`
 	AlicloudDiskDevices               `mapstructure:",squash"`
 }
 

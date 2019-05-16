@@ -14,9 +14,8 @@ import (
 )
 
 type stepCreateTags struct {
-	ImageTags    AliCloudTagMap
-	SnapshotTags AliCloudTagMap
-	Ctx          interpolate.Context
+	Tags AliCloudTagMap
+	Ctx  interpolate.Context
 }
 
 func (s *stepCreateTags) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -26,35 +25,19 @@ func (s *stepCreateTags) Run(ctx context.Context, state multistep.StateBag) mult
 	imageId := state.Get("alicloudimage").(string)
 	snapshotIds := state.Get("alicloudsnapshots").([]string)
 
-	if !s.ImageTags.IsSet() && !s.SnapshotTags.IsSet() {
+	if !s.Tags.IsSet() {
 		return multistep.ActionContinue
-	} else {
-		if s.ImageTags.IsSet() && !s.SnapshotTags.IsSet() {
-			s.SnapshotTags = s.ImageTags
-		}
-		if !s.ImageTags.IsSet() && s.SnapshotTags.IsSet() {
-			s.ImageTags = s.SnapshotTags
-		}
 	}
 
 	// Convert tags to ecs.Tag format
 	ui.Say("Creating IMAGE tags")
-	imageTags, err := s.ImageTags.ALICLOUDTags(s.Ctx, config.AlicloudRegion, state)
+	tags, err := s.Tags.ALICLOUDTags(s.Ctx, config.AlicloudRegion, state)
 	if err != nil {
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	imageTags.Report(ui)
-
-	ui.Say("Creating snapshot tags")
-	snapshotTags, err := s.SnapshotTags.ALICLOUDTags(s.Ctx, config.AlicloudRegion, state)
-	if err != nil {
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
-	}
-	snapshotTags.Report(ui)
+	tags.Report(ui)
 
 	// Retry creating tags for about 2.5 minutes
 	err = retry.Config{
@@ -71,26 +54,26 @@ func (s *stepCreateTags) Run(ctx context.Context, state multistep.StateBag) mult
 		RetryDelay: (&retry.Backoff{InitialBackoff: 200 * time.Millisecond, MaxBackoff: 30, Multiplier: 2}).Linear,
 	}.Run(ctx, func(ctx context.Context) error {
 		// Tag images and snapshots
-		ui.Say(fmt.Sprintf("Adding tags(%s) to image: %s", s.ImageTags, imageId))
+		ui.Say(fmt.Sprintf("Adding tags(%s) to image: %s", s.Tags, imageId))
 
 		addTagsRequest := ecs.CreateAddTagsRequest()
 		addTagsRequest.RegionId = config.AlicloudRegion
 		addTagsRequest.ResourceId = imageId
 		addTagsRequest.ResourceType = TagResourceImage
-		addTagsRequest.Tag = &imageTags.ALICLOUDTags
+		addTagsRequest.Tag = &tags.ALICLOUDTags
 		if _, err := client.AddTags(addTagsRequest); err != nil {
 			return err
 		}
 
 		// Override tags on snapshots
 		for _, snapshotId := range snapshotIds {
-			ui.Say(fmt.Sprintf("Adding tags(%s) to snapshot: %s", s.SnapshotTags, snapshotId))
+			ui.Say(fmt.Sprintf("Adding tags(%s) to snapshot: %s", s.Tags, snapshotId))
 
 			addTagsRequest := ecs.CreateAddTagsRequest()
 			addTagsRequest.RegionId = config.AlicloudRegion
 			addTagsRequest.ResourceId = snapshotId
 			addTagsRequest.ResourceType = TagResourceSnapshot
-			addTagsRequest.Tag = &snapshotTags.ALICLOUDTags
+			addTagsRequest.Tag = &tags.ALICLOUDTags
 
 			if _, err := client.AddTags(addTagsRequest); err != nil {
 				return err
