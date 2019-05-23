@@ -1,9 +1,6 @@
 env:
   - USER=travis GO111MODULE=off
 
-os:
-  - osx
-
 sudo: false
 
 language: go
@@ -13,11 +10,11 @@ go:
 
 script:
   - df -h
-  - travis_wait make ci
+  - go get ./...
+  - go vet ./...
+  - go build ./...
+  - go test -run=nope ./...
 
 branches:
   only:
     - master
-
-matrix:
-  fast_finish: true
